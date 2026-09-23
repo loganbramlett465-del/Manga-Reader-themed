@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Setup Java JDK 21
         uses: actions/setup-java@v4
@@ -27,10 +27,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept Android SDK Licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
-      - name: Prepare Web Assets & Initialize Capacitor
+      - name: Prepare Web Directory & Capacitor Dependencies
         run: |
           mkdir -p www
           cp index.html www/
@@ -40,11 +37,11 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Build Android APK
+      - name: Build Android APK via Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
